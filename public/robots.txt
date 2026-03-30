@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://fizzora.vercel.app/sitemap.xml
+Sitemap: https://fizzora-app.vercel.app/sitemap.xml
