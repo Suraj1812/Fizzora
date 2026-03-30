@@ -1,5 +1,35 @@
 import type { FormEvent } from 'react';
-import { MotionConfig, motion, useScroll, useTransform } from 'framer-motion';
+import { Suspense, lazy, useRef, useState } from 'react';
+import { AnimatePresence, MotionConfig, motion, useScroll, useTransform } from 'framer-motion';
+import {
+  ArrowRight,
+  BadgeCheck,
+  Blend,
+  Cherry,
+  CircleOff,
+  Citrus,
+  Disc3,
+  FlameKindling,
+  GlassWater,
+  MapPinned,
+  Martini,
+  Menu,
+  MoonStar,
+  Music4,
+  Play,
+  Send,
+  Sparkles,
+  Star,
+  X,
+  Zap,
+  type LucideIcon,
+} from 'lucide-react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, EffectCreative, Pagination } from 'swiper/modules';
+import type { Swiper as SwiperType } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/effect-creative';
+import 'swiper/css/pagination';
 import { BrandMark } from './components/BrandMark';
 import { CanMock } from './components/CanMock';
 import {
@@ -13,324 +43,185 @@ import {
   testimonials,
   type Feature,
   type Flavor,
-  type LifestyleShot,
   type ServingMode,
   type Testimonial,
 } from './data/content';
 
-const heroPhotos = [
-  'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80',
+const flavorIcons: LucideIcon[] = [Citrus, Cherry, FlameKindling, MoonStar];
+const HeroScene = lazy(async () => {
+  const module = await import('./components/HeroScene');
+  return { default: module.HeroScene };
+});
+const storyPoints = [
+  'Built for loud dinners, rooftop link-ups, and afters that were never meant to be one drink long.',
+  'The brand is social-first and style-aware, not wellness-first and scared of its own flavor.',
+  'Everything on the page now has a job: sell the can, show the mood, and keep the layout clean.',
 ];
-
-const storyPhotos = [
-  'https://images.unsplash.com/photo-1516302752625-fcc3c50ae61f?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&q=80',
-];
-
-const heroChips = [
-  'Late dinner approved',
-  'Roof deck ready',
-  'Mixes hard',
-  'Looks expensive',
-];
-
-const orbitNotes = [
-  { label: 'Yuzu peel', className: 'left-[7%] top-[18%]', delay: 0.2 },
-  { label: 'Hibiscus', className: 'right-[5%] top-[20%]', delay: 0.7 },
-  { label: 'Cracked pepper', className: 'left-[10%] bottom-[24%]', delay: 1.1 },
-  { label: 'Espresso fizz', className: 'right-[10%] bottom-[18%]', delay: 1.5 },
-];
-
-const flavorLayouts = [
-  'lg:col-span-7 lg:row-span-2 min-h-[34rem]',
-  'lg:col-span-5 min-h-[25rem]',
-  'lg:col-span-5 min-h-[25rem]',
-  'lg:col-span-7 min-h-[28rem]',
-];
-
-const serveAccents = ['#ff7a1a', '#ff3bb8', '#30c9ff'] as const;
+const socialIconMap: Record<string, LucideIcon> = {
+  Instagram: Sparkles,
+  TikTok: Play,
+  Spotify: Disc3,
+};
 
 export function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeFlavor, setActiveFlavor] = useState(0);
+  const swiperRef = useRef<SwiperType | null>(null);
   const { scrollY } = useScroll();
-  const orbOneY = useTransform(scrollY, [0, 2600], [0, -200]);
-  const orbTwoY = useTransform(scrollY, [0, 2600], [0, 220]);
-  const heroStackY = useTransform(scrollY, [0, 900], [0, 120]);
-  const heroTextY = useTransform(scrollY, [0, 900], [0, -50]);
-  const ribbonItems = [...brand.ticker, 'No alcohol. No soft launch energy.', 'Built to be seen.'];
+  const glowLeftY = useTransform(scrollY, [0, 2200], [0, -160]);
+  const glowRightY = useTransform(scrollY, [0, 2200], [0, 180]);
+  const heroCopyY = useTransform(scrollY, [0, 700], [0, -28]);
+  const heroStageY = useTransform(scrollY, [0, 900], [0, 54]);
 
   const handleNewsletterSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+  };
+
+  const goToFlavor = (index: number) => {
+    setActiveFlavor(index);
+    swiperRef.current?.slideToLoop(index);
   };
 
   return (
     <MotionConfig reducedMotion="user">
       <div className="relative overflow-x-hidden bg-night text-white">
         <motion.div
-          style={{ y: orbOneY }}
-          className="pointer-events-none fixed left-[-8rem] top-[5rem] z-0 h-[24rem] w-[24rem] rounded-full bg-[#ff3bb8]/25 blur-[140px]"
+          style={{ y: glowLeftY }}
+          className="pointer-events-none fixed left-[-10rem] top-[5rem] z-0 h-[28rem] w-[28rem] rounded-full bg-[#ff7a1a]/20 blur-[160px]"
         />
         <motion.div
-          style={{ y: orbTwoY }}
-          className="pointer-events-none fixed right-[-8rem] top-[18rem] z-0 h-[28rem] w-[28rem] rounded-full bg-[#30c9ff]/20 blur-[170px]"
+          style={{ y: glowRightY }}
+          className="pointer-events-none fixed right-[-11rem] top-[16rem] z-0 h-[30rem] w-[30rem] rounded-full bg-[#ff3bb8]/18 blur-[180px]"
         />
-        <div className="grain-overlay pointer-events-none fixed inset-0 z-0 opacity-40" />
+        <div className="pointer-events-none fixed inset-x-0 top-0 z-0 h-[32rem] bg-[radial-gradient(circle_at_top,rgba(48,201,255,0.12),transparent_46%)]" />
 
         <div className="relative z-10">
-          <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 md:px-7">
-            <div className="mx-auto flex max-w-[1380px] items-center justify-between rounded-full border border-white/10 bg-black/45 px-5 py-4 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-2xl">
-              <a href="#home" className="flex items-center gap-3">
-                <BrandMark className="h-11 w-11 shrink-0 shadow-[0_0_40px_rgba(255,59,184,0.35)]" />
-                <div>
-                  <p className="font-display text-xl font-extrabold uppercase leading-none tracking-[-0.04em]">
-                    {brand.name}
-                  </p>
-                  <p className="text-[0.62rem] uppercase tracking-[0.38em] text-white/55">
-                    {brand.tagline}
-                  </p>
-                </div>
-              </a>
-
-              <nav aria-label="Primary" className="hidden items-center gap-8 lg:flex">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    className="text-xs font-bold uppercase tracking-[0.28em] text-white/65 transition-colors duration-300 hover:text-white"
-                  >
-                    {link.label}
-                  </a>
-                ))}
-              </nav>
-
-              <a
-                href="#shop"
-                className="rounded-full bg-white px-5 py-3 text-[0.68rem] font-black uppercase tracking-[0.28em] text-night transition-transform duration-300 hover:-translate-y-0.5"
-              >
-                Buy the Pack
-              </a>
-            </div>
-          </header>
+          <Header menuOpen={menuOpen} onToggleMenu={() => setMenuOpen((open) => !open)} />
+          <MobileMenu open={menuOpen} onClose={() => setMenuOpen(false)} />
 
           <main>
-            <section id="home" className="relative overflow-hidden px-5 pb-12 pt-28 md:px-8 lg:px-10">
-              <div className="mx-auto max-w-[1380px]">
-                <div className="grid gap-10 xl:grid-cols-[0.88fr_1.12fr] xl:items-center">
-                  <motion.div
-                    style={{ y: heroTextY }}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-                    className="relative pt-6"
-                  >
-                    <div className="flex flex-wrap gap-3">
-                      <Pill>Premium zero-proof</Pill>
-                      <Pill>Nightlife energy</Pill>
-                      <Pill>4 loud signatures</Pill>
-                    </div>
+            <section id="home" className="px-4 pb-10 pt-28 md:px-8 lg:px-10">
+              <div className="mx-auto grid max-w-[1380px] gap-8 xl:grid-cols-[0.9fr_1.1fr] xl:items-center">
+                <motion.div
+                  style={{ y: heroCopyY }}
+                  initial={{ opacity: 0, y: 28 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                  className="max-w-[40rem]"
+                >
+                  <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[0.68rem] font-black uppercase tracking-[0.28em] text-white/82">
+                    <Sparkles className="h-3.5 w-3.5 text-[#d4ff39]" />
+                    Premium zero-proof social can
+                  </div>
 
-                    <div className="relative mt-8">
-                      <span className="hero-outline pointer-events-none absolute -left-1 top-[-3.5rem] hidden font-display text-[7rem] font-extrabold uppercase leading-none md:block xl:text-[10rem]">
-                        Loud
-                      </span>
-                      <h1 className="max-w-4xl font-display text-[3.4rem] font-extrabold uppercase leading-[0.86] tracking-[-0.06em] text-white sm:text-[4.6rem] md:text-[6rem] xl:text-[8rem]">
-                        Bright cans
-                        <span className="block text-[#d4ff39]">for dark nights.</span>
-                      </h1>
-                    </div>
-
-                    <p className="mt-7 max-w-2xl text-lg leading-8 text-white/78 md:text-xl">
-                      Fizzora is the zero-proof party drink for tables that order loudly, dress well,
-                      and stay out longer than planned. Bold fruit, bright fizz, and actual social
-                      energy without the alcohol dragging the night.
-                    </p>
-
-                    <div className="mt-9 flex flex-col gap-4 sm:flex-row">
-                      <a
-                        href="#flavors"
-                        className="rounded-full bg-[linear-gradient(135deg,#ff7a1a_0%,#ff3bb8_50%,#30c9ff_100%)] px-8 py-4 text-center text-sm font-black uppercase tracking-[0.24em] text-white shadow-[0_18px_60px_rgba(255,59,184,0.3)] transition-transform duration-300 hover:-translate-y-1"
-                      >
-                        Explore Flavors
-                      </a>
-                      <a
-                        href="#story"
-                        className="rounded-full border border-white/15 bg-white/5 px-8 py-4 text-center text-sm font-black uppercase tracking-[0.24em] text-white transition-colors duration-300 hover:bg-white/10"
-                      >
-                        Meet the Brand
-                      </a>
-                    </div>
-
-                    <div className="mt-10 grid gap-4 md:grid-cols-3">
-                      {brand.heroStats.map((stat, index) => (
-                        <motion.div
-                          key={stat.label}
-                          initial={{ opacity: 0, y: 22 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{
-                            duration: 0.75,
-                            delay: 0.18 + index * 0.08,
-                            ease: [0.22, 1, 0.36, 1],
-                          }}
-                          className="rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-5 backdrop-blur-xl"
-                        >
-                          <p className="text-[0.7rem] font-black uppercase tracking-[0.32em] text-white/48">
-                            {stat.label}
-                          </p>
-                          <p className="mt-3 text-sm leading-6 text-white/82">{stat.value}</p>
-                        </motion.div>
-                      ))}
-                    </div>
-
-                    <div className="mt-10 flex flex-wrap gap-3">
-                      {heroChips.map((chip) => (
-                        <span
-                          key={chip}
-                          className="rounded-full border border-white/10 bg-black/35 px-4 py-2 text-[0.68rem] font-bold uppercase tracking-[0.25em] text-white/72"
-                        >
-                          {chip}
-                        </span>
-                      ))}
-                    </div>
-                  </motion.div>
-
-                  <motion.div
-                    style={{ y: heroStackY }}
-                    initial={{ opacity: 0, scale: 0.96 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                    className="relative min-h-[760px]"
-                  >
-                    <div className="absolute inset-0 rounded-[3.2rem] bg-[linear-gradient(135deg,rgba(255,122,26,0.22),rgba(255,59,184,0.18)_36%,rgba(6,7,11,0.92)_70%)] ring-1 ring-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.48)]" />
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 26, repeat: Infinity, ease: 'linear' }}
-                      className="absolute left-1/2 top-1/2 h-[30rem] w-[30rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 border-dashed opacity-35"
-                    />
-                    <motion.div
-                      animate={{ rotate: -360 }}
-                      transition={{ duration: 34, repeat: Infinity, ease: 'linear' }}
-                      className="absolute left-1/2 top-1/2 h-[24rem] w-[24rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 opacity-25"
-                    />
-                    <motion.div
-                      animate={{ scale: [0.94, 1.04, 0.94], opacity: [0.24, 0.44, 0.24] }}
-                      transition={{ duration: 8.5, repeat: Infinity, ease: 'easeInOut' }}
-                      className="absolute left-1/2 top-1/2 h-[18rem] w-[18rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(212,255,57,0.28),transparent_60%)] blur-[30px]"
-                    />
-                    <div className="absolute left-6 top-6 h-44 w-56 -rotate-[11deg] overflow-hidden rounded-[2rem] border border-white/10 shadow-[0_24px_50px_rgba(0,0,0,0.35)] md:h-52 md:w-64">
-                      <img
-                        src={heroPhotos[0]}
-                        alt="Friends holding drinks on a rooftop at sunset"
-                        className="h-full w-full object-cover"
-                        loading="eager"
-                        fetchPriority="high"
-                        decoding="async"
-                      />
-                    </div>
-                    <div className="absolute right-6 top-12 h-52 w-44 rotate-[10deg] overflow-hidden rounded-[2rem] border border-white/10 shadow-[0_24px_50px_rgba(0,0,0,0.35)] md:h-64 md:w-56">
-                      <img
-                        src={heroPhotos[1]}
-                        alt="A dressed-up dinner setting with cocktails and cans"
-                        className="h-full w-full object-cover"
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    </div>
-                    <div className="absolute bottom-10 left-12 h-44 w-56 -rotate-[7deg] overflow-hidden rounded-[2rem] border border-white/10 shadow-[0_24px_50px_rgba(0,0,0,0.35)] md:h-56 md:w-72">
-                      <img
-                        src={heroPhotos[2]}
-                        alt="Friends laughing together during a social night out"
-                        className="h-full w-full object-cover"
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    </div>
-
-                    <div className="pointer-events-none absolute bottom-16 left-12 hidden font-display text-[7rem] font-extrabold uppercase leading-none tracking-[-0.08em] text-white/[0.08] lg:block">
-                      Fizzora
-                    </div>
-
-                    {orbitNotes.map((note) => (
-                      <OrbitTag
-                        key={note.label}
-                        label={note.label}
-                        className={note.className}
-                        delay={note.delay}
-                      />
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    {brand.ticker.slice(0, 3).map((item, index) => (
+                      <HeroChip key={item} label={item} index={index} />
                     ))}
+                  </div>
 
-                    <div className="absolute left-1/2 top-[16%] z-10 -translate-x-1/2 md:top-[12%]">
-                      <CanMock
-                        name={flavors[0].name}
-                        flavorLine={flavors[0].flavorLine}
-                        gradient={flavors[0].gradient}
-                        rotate={-12}
-                        delay={0.1}
-                        className="scale-[0.96] md:scale-100"
-                      />
-                    </div>
-                    <div className="absolute left-[8%] top-[26%] z-20 md:top-[30%]">
-                      <CanMock
-                        name={flavors[1].name}
-                        flavorLine={flavors[1].flavorLine}
-                        gradient={flavors[1].gradient}
-                        rotate={-22}
-                        delay={0.35}
-                        compact
-                      />
-                    </div>
-                    <div className="absolute right-[6%] top-[34%] z-20 md:top-[28%]">
-                      <CanMock
-                        name={flavors[2].name}
-                        flavorLine={flavors[2].flavorLine}
-                        gradient={flavors[2].gradient}
-                        rotate={16}
-                        delay={0.55}
-                        compact
-                      />
-                    </div>
+                  <h1 className="mt-7 font-display text-[clamp(3.6rem,8.5vw,8rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.08em] text-white">
+                    <span className="block">Open</span>
+                    <span className="block text-white/88">something</span>
+                    <span className="block bg-[linear-gradient(120deg,#ff7a1a_0%,#ff3bb8_45%,#30c9ff_100%)] bg-clip-text text-transparent">
+                      louder.
+                    </span>
+                  </h1>
 
-                    <motion.div
-                      animate={{ rotate: [8, 0, 8] }}
-                      transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-                      className="absolute right-8 top-[56%] z-30 flex h-32 w-32 items-center justify-center rounded-full bg-[#d4ff39] text-center text-night shadow-[0_24px_60px_rgba(212,255,57,0.24)] md:h-40 md:w-40"
+                  <p className="mt-7 max-w-[35rem] text-lg leading-8 text-white/72 md:text-xl">
+                    {brand.heroCopy} Designed to look expensive on the table, feel social in the
+                    hand, and keep the night sharp.
+                  </p>
+
+                  <div className="mt-9 flex flex-col gap-4 sm:flex-row">
+                    <a
+                      href="#flavors"
+                      className="inline-flex items-center justify-center gap-3 rounded-full bg-[linear-gradient(135deg,#ff7a1a_0%,#ff3bb8_55%,#30c9ff_100%)] px-8 py-4 text-sm font-black uppercase tracking-[0.24em] text-white shadow-[0_24px_70px_rgba(255,59,184,0.28)] transition-transform duration-300 hover:-translate-y-1"
                     >
-                      <div>
-                        <p className="font-display text-3xl font-extrabold uppercase leading-none md:text-4xl">
-                          4
-                        </p>
-                        <p className="mt-2 text-[0.62rem] font-black uppercase tracking-[0.28em]">
-                          Flavors that
-                          <br />
-                          show up loud
-                        </p>
-                      </div>
-                    </motion.div>
+                      Explore flavors
+                      <ArrowRight className="h-4 w-4" />
+                    </a>
+                    <a
+                      href="#story"
+                      className="inline-flex items-center justify-center rounded-full border border-white/12 bg-white/5 px-8 py-4 text-sm font-black uppercase tracking-[0.24em] text-white transition-colors duration-300 hover:bg-white/10"
+                    >
+                      Meet the brand
+                    </a>
+                  </div>
 
-                    <div className="absolute bottom-8 right-8 z-20 max-w-xs rounded-[2rem] border border-white/10 bg-black/55 p-5 backdrop-blur-xl">
-                      <p className="text-[0.7rem] font-black uppercase tracking-[0.34em] text-[#d4ff39]">
-                        Party pack drop
+                  <div className="mt-10 grid gap-4 sm:grid-cols-3">
+                    {brand.heroStats.map((stat) => (
+                      <HeroStat key={stat.label} label={stat.label} value={stat.value} />
+                    ))}
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  style={{ y: heroStageY }}
+                  initial={{ opacity: 0, scale: 0.97 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
+                  className="relative min-h-[700px] overflow-hidden rounded-[2.8rem] border border-white/10 bg-[linear-gradient(160deg,rgba(255,122,26,0.16),rgba(255,59,184,0.08)_40%,rgba(8,9,18,0.95)_100%)] shadow-[0_40px_140px_rgba(0,0,0,0.42)]"
+                >
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_22%,rgba(255,255,255,0.12),transparent_26%),radial-gradient(circle_at_50%_70%,rgba(212,255,57,0.18),transparent_28%)]" />
+                  <div className="absolute inset-[1rem] rounded-[2.2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01))] backdrop-blur-sm" />
+                  <Suspense fallback={<HeroSceneFallback />}>
+                    <HeroScene flavors={flavors.slice(0, 3)} />
+                  </Suspense>
+
+                  <div className="absolute left-5 top-5 flex max-w-[15rem] items-start gap-3 rounded-[1.5rem] border border-white/10 bg-black/35 px-4 py-4 backdrop-blur-xl">
+                    <div className="rounded-full bg-[#d4ff39] p-2 text-night">
+                      <Music4 className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-[0.62rem] font-black uppercase tracking-[0.28em] text-[#d4ff39]">
+                        After dark
                       </p>
-                      <p className="mt-3 font-display text-3xl font-extrabold uppercase leading-none tracking-[-0.05em]">
-                        12 cans.
-                        <span className="block text-white/65">Zero boring ones.</span>
-                      </p>
-                      <p className="mt-4 text-sm leading-6 text-white/72">
-                        Four bright flavors designed for dinners, rooftops, afters, and the one
-                        friend who always brings the better thing.
+                      <p className="mt-2 text-sm leading-6 text-white/74">
+                        Big visual energy, real 3D cans, and way less clutter fighting the product.
                       </p>
                     </div>
-                  </motion.div>
-                </div>
+                  </div>
+
+                  <div className="absolute right-5 top-5 rounded-full border border-white/12 bg-black/35 px-4 py-2 text-[0.68rem] font-black uppercase tracking-[0.26em] text-white/76 backdrop-blur-xl">
+                    0.0% alcohol
+                  </div>
+
+                  <div className="absolute bottom-5 left-5 right-5 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+                    <div className="rounded-[1.8rem] border border-white/10 bg-black/35 p-5 backdrop-blur-xl">
+                      <p className="text-[0.62rem] font-black uppercase tracking-[0.28em] text-white/46">
+                        Signature pack
+                      </p>
+                      <p className="mt-3 font-display text-3xl font-extrabold uppercase leading-[0.92] tracking-[-0.06em]">
+                        Four flavors with serious table presence.
+                      </p>
+                      <p className="mt-4 max-w-lg text-sm leading-6 text-white/72">
+                        Bright citrus, dressed-up berry, tropical heat, and a dark cola finish that
+                        keeps the page from feeling one-note.
+                      </p>
+                    </div>
+                    <div className="rounded-[1.8rem] border border-white/10 bg-[#d4ff39] p-5 text-night">
+                      <p className="text-[0.62rem] font-black uppercase tracking-[0.28em]">
+                        Starting at
+                      </p>
+                      <p className="mt-3 font-display text-5xl font-extrabold uppercase leading-none tracking-[-0.08em]">
+                        $34
+                      </p>
+                      <p className="mt-3 text-sm font-semibold leading-6">
+                        One pack, four moods, and zero generic “wellness” energy.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
               </div>
             </section>
 
-            <section className="overflow-hidden border-y border-white/10 bg-black/35 backdrop-blur-xl">
-              <div className="flex w-[220%] animate-marquee items-center gap-10 whitespace-nowrap py-5">
-                {[...ribbonItems, ...ribbonItems].map((item, index) => (
+            <section className="overflow-hidden border-y border-white/10 bg-black/25 backdrop-blur-xl">
+              <div className="flex w-[200%] animate-marquee items-center gap-10 whitespace-nowrap py-5">
+                {[...brand.ticker, ...brand.ticker].map((item, index) => (
                   <div
                     key={`${item}-${index}`}
-                    className="flex items-center gap-10 text-[0.68rem] font-black uppercase tracking-[0.34em] text-white/60"
+                    className="flex items-center gap-10 text-[0.68rem] font-black uppercase tracking-[0.3em] text-white/62"
                   >
                     <span>{item}</span>
                     <span className="h-1.5 w-1.5 rounded-full bg-[#d4ff39]" />
@@ -340,294 +231,275 @@ export function App() {
             </section>
 
             <section id="benefits" className="section-shell">
-              <div className="grid gap-10 xl:grid-cols-[0.78fr_1.22fr] xl:items-start">
-                <div>
-                  <p className="text-sm font-black uppercase tracking-[0.36em] text-[#d4ff39]">
-                    Why It Lands
-                  </p>
-                  <h2 className="mt-5 max-w-xl font-display text-5xl font-extrabold uppercase leading-[0.9] tracking-[-0.06em] text-white md:text-6xl">
-                    Zero-proof should never feel like the backup plan.
-                  </h2>
-                  <p className="mt-6 max-w-lg text-lg leading-8 text-white/74">
-                    The problem with most non-alcoholic drinks is not the lack of alcohol. It is
-                    the lack of attitude. Fizzora fixes that with louder flavor, sharper branding,
-                    and enough personality to actually hold table space.
-                  </p>
+              <div className="grid gap-5 xl:grid-cols-[0.8fr_1.2fr]">
+                <div className="rounded-[2.6rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] p-7 md:p-8">
+                  <SectionIntro
+                    eyebrow="Why it hits"
+                    title="A premium page direction without the mess."
+                    body="The new rhythm is intentional: strong hero, cleaner hierarchy, tighter cards, and just enough motion to make the brand feel alive."
+                  />
 
-                  <div className="mt-8 rounded-[2.4rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] p-7 shadow-[0_24px_70px_rgba(0,0,0,0.3)]">
-                    <p className="text-[0.72rem] font-black uppercase tracking-[0.34em] text-white/48">
-                      The manifesto
-                    </p>
-                    <p className="mt-4 font-display text-3xl font-extrabold uppercase leading-tight tracking-[-0.05em] text-white">
-                      We got tired of wellness-coded cans whispering at the edge of the party.
-                    </p>
-                    <p className="mt-5 text-sm leading-7 text-white/68">
-                      So we built something brighter, messier, more social, and actually worth
-                      bringing to the table. This is a flavor-first brand with nightlife instincts,
-                      not a compromise drink with better PR.
-                    </p>
+                  <div className="mt-8 space-y-4">
+                    {storyPoints.map((point, index) => (
+                      <div
+                        key={point}
+                        className="flex items-start gap-4 rounded-[1.5rem] border border-white/10 bg-black/25 px-4 py-4"
+                      >
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/8 text-sm font-black uppercase text-[#d4ff39]">
+                          0{index + 1}
+                        </div>
+                        <p className="text-sm leading-7 text-white/72">{point}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                <div className="grid gap-5 md:grid-cols-2">
+                <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                   {features.map((feature, index) => (
-                    <BenefitPanel key={feature.title} feature={feature} index={index} />
+                    <BenefitCard key={feature.title} feature={feature} index={index} />
                   ))}
                 </div>
               </div>
             </section>
 
             <section id="flavors" className="section-shell pt-6">
-              <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-                <div className="max-w-3xl">
-                  <p className="text-sm font-black uppercase tracking-[0.36em] text-[#d4ff39]">
-                    Signature Drop
-                  </p>
-                  <h2 className="mt-5 font-display text-5xl font-extrabold uppercase leading-[0.9] tracking-[-0.06em] text-white md:text-6xl">
-                    Four flavors. Four moods. One very loud fridge.
-                  </h2>
-                  <p className="mt-6 text-lg leading-8 text-white/74">
-                    Each can is designed like a headliner: high color, clear personality, and a
-                    taste profile strong enough to stand solo or carry a fast mix.
-                  </p>
+              <div className="grid gap-8 xl:grid-cols-[0.42fr_0.58fr] xl:items-center">
+                <div>
+                  <SectionIntro
+                    eyebrow="Flavors"
+                    title="Swipe through the pack."
+                    body="This section now behaves like a product showcase instead of a wall of cards. The active flavor leads the story, the can gets room, and the rest stays readable."
+                  />
+
+                  <div className="mt-8 space-y-3">
+                    {flavors.map((flavor, index) => {
+                      const Icon = flavorIcons[index] ?? Sparkles;
+                      const isActive = index === activeFlavor;
+
+                      return (
+                        <button
+                          key={flavor.name}
+                          type="button"
+                          onClick={() => goToFlavor(index)}
+                          className={`flex w-full items-center gap-4 rounded-[1.8rem] border px-4 py-4 text-left transition-all duration-300 ${
+                            isActive
+                              ? 'border-white/16 bg-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.18)]'
+                              : 'border-white/8 bg-black/25 hover:border-white/12 hover:bg-white/6'
+                          }`}
+                        >
+                          <div
+                            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-night"
+                            style={{ backgroundColor: flavor.accent }}
+                          >
+                            <Icon className="h-5 w-5" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-display text-2xl font-extrabold uppercase leading-none tracking-[-0.05em] text-white">
+                              {flavor.name}
+                            </p>
+                            <p className="mt-2 text-sm leading-6 text-white/64">
+                              {flavor.flavorLine}
+                            </p>
+                          </div>
+                          <ArrowRight
+                            className={`h-5 w-5 shrink-0 transition-transform duration-300 ${
+                              isActive ? 'translate-x-0 text-white' : 'text-white/34'
+                            }`}
+                          />
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
-                <a
-                  href="#shop"
-                  className="inline-flex w-fit rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-black uppercase tracking-[0.24em] text-white transition-colors duration-300 hover:bg-white/10"
-                >
-                  Shop All Four
-                </a>
-              </div>
-
-              <div className="mt-12 grid auto-rows-fr gap-5 lg:grid-cols-12">
-                {flavors.map((flavor, index) => (
-                  <FlavorPoster
-                    key={flavor.name}
-                    flavor={flavor}
-                    index={index}
-                    className={flavorLayouts[index]}
-                  />
-                ))}
+                <div className="relative">
+                  <Swiper
+                    modules={[Autoplay, EffectCreative, Pagination]}
+                    loop
+                    speed={850}
+                    centeredSlides
+                    grabCursor
+                    effect="creative"
+                    pagination={{ clickable: true }}
+                    autoplay={{ delay: 4300, disableOnInteraction: false }}
+                    onBeforeInit={(swiper) => {
+                      swiperRef.current = swiper;
+                    }}
+                    onSlideChange={(swiper) => setActiveFlavor(swiper.realIndex)}
+                    creativeEffect={{
+                      prev: {
+                        translate: ['-14%', 0, -100],
+                        rotate: [0, 0, -4],
+                        scale: 0.92,
+                      },
+                      next: {
+                        translate: ['14%', 0, -100],
+                        rotate: [0, 0, 4],
+                        scale: 0.92,
+                      },
+                    }}
+                    breakpoints={{
+                      0: { slidesPerView: 1.04, spaceBetween: 16 },
+                      900: { slidesPerView: 1.08, spaceBetween: 22 },
+                    }}
+                    className="flavor-swiper !overflow-visible"
+                  >
+                    {flavors.map((flavor, index) => (
+                      <SwiperSlide key={flavor.name} className="pb-12">
+                        <FlavorShowcase flavor={flavor} index={index} />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                </div>
               </div>
             </section>
 
             <section id="story" className="section-shell">
-              <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr] xl:items-stretch">
-                <div className="rounded-[3rem] border border-white/10 bg-[linear-gradient(135deg,rgba(255,122,26,0.12),rgba(255,59,184,0.08)_38%,rgba(255,255,255,0.03)_100%)] p-7 shadow-[0_28px_90px_rgba(0,0,0,0.34)] md:p-10">
-                  <p className="text-sm font-black uppercase tracking-[0.36em] text-[#d4ff39]">
-                    Brand Story
-                  </p>
-                  <h2 className="mt-5 max-w-2xl font-display text-5xl font-extrabold uppercase leading-[0.9] tracking-[-0.06em] text-white md:text-6xl">
-                    We did not build this to be polite.
-                  </h2>
-                  <p className="mt-6 max-w-2xl text-lg leading-8 text-white/74">
-                    Fizzora started with one simple frustration: too many “grown-up” drinks looked
-                    great in a press release and tasted invisible in real life. We wanted something
-                    with nightlife color, expensive energy, and a flavor profile that actually
-                    deserved the moment.
-                  </p>
+              <div className="grid gap-5 xl:grid-cols-[0.85fr_1.15fr]">
+                <div className="rounded-[2.8rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] p-7 md:p-8">
+                  <SectionIntro
+                    eyebrow="Brand story"
+                    title="We made the can you actually want in the middle of the table."
+                    body="Fizzora came from the gap between boring non-alcoholic drinks and the kind of drink identity people actually want to be seen ordering. We wanted flavor, social energy, and something that still feels premium after dark."
+                  />
 
-                  <div className="mt-10 grid gap-5 md:grid-cols-[1.1fr_0.9fr]">
-                    <div className="rounded-[2.2rem] border border-white/10 bg-black/35 p-6 backdrop-blur-xl">
-                      <p className="text-[0.72rem] font-black uppercase tracking-[0.34em] text-white/45">
-                        Our point of view
-                      </p>
-                      <p className="mt-5 font-display text-3xl font-extrabold uppercase leading-tight tracking-[-0.05em] text-white">
-                        If the can cannot hold its own in the center of a table, it is not done.
-                      </p>
-                    </div>
-                    <div className="space-y-4">
-                      <StoryStat value="12" label="cans in the party pack" />
-                      <StoryStat value="4" label="hero flavors with distinct moods" />
-                      <StoryStat value="0.0%" label="alcohol, still all in" />
-                    </div>
+                  <div className="mt-8 grid gap-4 sm:grid-cols-3">
+                    <StoryMetric value="4" label="signature flavors" />
+                    <StoryMetric value="12" label="cans per pack" />
+                    <StoryMetric value="0.0%" label="alcohol" />
+                  </div>
+
+                  <div className="mt-8 rounded-[1.8rem] border border-white/10 bg-black/25 p-5">
+                    <p className="text-[0.68rem] font-black uppercase tracking-[0.28em] text-[#d4ff39]">
+                      Brand line
+                    </p>
+                    <p className="mt-4 font-display text-3xl font-extrabold uppercase leading-none tracking-[-0.06em] text-white">
+                      {brand.tagline}
+                    </p>
+                    <p className="mt-4 text-sm leading-7 text-white/68">
+                      Loud enough for the group chat, polished enough for the menu, and never
+                      preachy about why it exists.
+                    </p>
                   </div>
                 </div>
 
                 <div className="grid gap-5 sm:grid-cols-2">
-                  <div className="overflow-hidden rounded-[2.6rem] border border-white/10 shadow-[0_24px_70px_rgba(0,0,0,0.35)] sm:col-span-2">
-                    <img
-                      src={storyPhotos[0]}
-                      alt="A lively club scene with people dancing and holding drinks"
-                      className="h-[20rem] w-full object-cover md:h-[26rem]"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                  <div className="rounded-[2.4rem] border border-white/10 bg-[#121218] p-6">
-                    <p className="text-[0.72rem] font-black uppercase tracking-[0.34em] text-[#30c9ff]">
-                      Not preachy
-                    </p>
-                    <p className="mt-4 text-base leading-7 text-white/74">
-                      We are not here to explain why you should feel virtuous. We are here to make
-                      the better-looking, better-tasting thing in the cooler.
-                    </p>
-                  </div>
-                  <div className="overflow-hidden rounded-[2.4rem] border border-white/10 shadow-[0_24px_70px_rgba(0,0,0,0.35)]">
-                    <img
-                      src={storyPhotos[1]}
-                      alt="Canned drinks on a table during a dinner party"
-                      className="h-full min-h-[15rem] w-full object-cover"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
+                  {lifestyleShots.map((shot, index) => (
+                    <LifestyleTile key={shot.title} shot={shot} index={index} />
+                  ))}
                 </div>
               </div>
             </section>
 
-            <section className="section-shell overflow-hidden">
-              <div className="max-w-3xl">
-                <p className="text-sm font-black uppercase tracking-[0.36em] text-[#d4ff39]">
-                  Lifestyle
-                </p>
-                <h2 className="mt-5 font-display text-5xl font-extrabold uppercase leading-[0.9] tracking-[-0.06em] text-white md:text-6xl">
-                  No rules. Just good times.
-                </h2>
-                <p className="mt-6 text-lg leading-8 text-white/74">
-                  Fizzora belongs at rooftops, dinner parties, golden hour hangs, and all the
-                  accidental afters that happen when nobody wants to call it yet.
-                </p>
-              </div>
-
-              <div className="hide-scrollbar mt-12 flex gap-5 overflow-x-auto pb-2">
-                {lifestyleShots.map((shot, index) => (
-                  <MomentCard key={shot.title} shot={shot} index={index} />
-                ))}
-              </div>
-            </section>
-
-            <section id="reviews" className="section-shell pt-6">
-              <div className="grid gap-8 xl:grid-cols-[0.85fr_1.15fr] xl:items-start">
-                <div>
-                  <p className="text-sm font-black uppercase tracking-[0.36em] text-[#d4ff39]">
-                    Group Chat Reviews
+            <section id="reviews" className="section-shell pt-4">
+              <div className="grid gap-5 xl:grid-cols-[0.72fr_1.28fr] xl:items-start">
+                <div className="rounded-[2.8rem] border border-white/10 bg-black/25 p-7 md:p-8">
+                  <p className="text-[0.72rem] font-black uppercase tracking-[0.32em] text-[#d4ff39]">
+                    Reviews
                   </p>
-                  <h2 className="mt-5 max-w-xl font-display text-5xl font-extrabold uppercase leading-[0.9] tracking-[-0.06em] text-white md:text-6xl">
-                    Not wellness-speak. Real friend-speak.
-                  </h2>
-                  <p className="mt-6 max-w-lg text-lg leading-8 text-white/74">
-                    The feedback loop is simple: if it tastes flat, nobody reorders it. If it looks
-                    cheap, it never makes the table. Fizzora keeps getting brought back because it
-                    clears both.
+                  <p className="mt-6 font-display text-[5rem] font-extrabold uppercase leading-[0.85] tracking-[-0.08em] text-white">
+                    4.9
+                  </p>
+                  <div className="mt-3 flex items-center gap-1 text-[#d4ff39]">
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <Star key={index} className="h-4 w-4 fill-current" />
+                    ))}
+                  </div>
+                  <p className="mt-6 max-w-sm text-base leading-8 text-white/72">
+                    The tone here sounds like real people talking about a drink they would actually
+                    bring out, not fake placeholder praise.
                   </p>
 
-                  <div className="mt-8 rounded-[2.4rem] border border-white/10 bg-[#111217] p-7 shadow-[0_24px_70px_rgba(0,0,0,0.3)]">
-                    <p className="text-[0.72rem] font-black uppercase tracking-[0.34em] text-white/45">
-                      Crowd average
+                  <div className="mt-8 rounded-[1.8rem] border border-white/10 bg-white/6 p-5">
+                    <p className="text-[0.68rem] font-black uppercase tracking-[0.28em] text-white/48">
+                      Most quoted line
                     </p>
-                    <div className="mt-4 flex items-end gap-4">
-                      <p className="font-display text-6xl font-extrabold uppercase leading-none tracking-[-0.08em] text-white">
-                        4.9
-                      </p>
-                      <p className="pb-2 text-sm font-bold uppercase tracking-[0.24em] text-white/58">
-                        imaginary stars
-                      </p>
-                    </div>
-                    <p className="mt-4 text-sm leading-7 text-white/72">
-                      Fictional reviews, real intent: this should feel like the can people talk about
-                      before they ask where you got it.
+                    <p className="mt-4 text-lg leading-8 text-white/86">
+                      “This doesn’t taste like a non-alcoholic drink. It tastes like the cool table
+                      ordered it first.”
                     </p>
                   </div>
                 </div>
 
                 <div className="grid gap-5 md:grid-cols-2">
                   {testimonials.map((testimonial, index) => (
-                    <ReviewBubble key={testimonial.name} testimonial={testimonial} index={index} />
+                    <ReviewCard key={testimonial.name} testimonial={testimonial} index={index} />
                   ))}
                 </div>
               </div>
             </section>
 
             <section className="section-shell">
-              <div className="rounded-[3rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02))] p-7 shadow-[0_24px_80px_rgba(0,0,0,0.32)] md:p-10">
-                <div className="max-w-3xl">
-                  <p className="text-sm font-black uppercase tracking-[0.36em] text-[#d4ff39]">
-                    How To Drink It
-                  </p>
-                  <h2 className="mt-5 font-display text-5xl font-extrabold uppercase leading-[0.9] tracking-[-0.06em] text-white md:text-6xl">
-                    Keep it easy. Keep it loud.
-                  </h2>
-                  <p className="mt-6 text-lg leading-8 text-white/74">
-                    Fizzora works straight from the can, over ice, or mixed into something faster.
-                    The whole point is that none of those choices feel like settling.
-                  </p>
-                </div>
+              <div className="overflow-hidden rounded-[3rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02))] p-7 md:p-10">
+                <div className="grid gap-8 lg:grid-cols-[0.74fr_1.26fr] lg:items-end">
+                  <SectionIntro
+                    eyebrow="How to drink"
+                    title="Straight, mixed, or packed for the ride."
+                    body="The serving section stays playful, but the layout is much more controlled now. Simple choices, clear icons, and enough visual weight to feel premium."
+                  />
 
-                <div className="mt-10 grid gap-5 md:grid-cols-3">
-                  {servingModes.map((mode, index) => (
-                    <ServePanel key={mode.title} mode={mode} index={index} />
-                  ))}
+                  <div className="grid gap-5 md:grid-cols-3">
+                    {servingModes.map((mode, index) => (
+                      <ServingCard key={mode.title} mode={mode} index={index} />
+                    ))}
+                  </div>
                 </div>
               </div>
             </section>
 
-            <section id="shop" className="section-shell pt-2">
-              <div className="relative overflow-hidden rounded-[3.2rem] border border-white/10 bg-[linear-gradient(120deg,#ff7a1a_0%,#ff3bb8_46%,#0b111f_100%)] px-7 py-8 shadow-[0_40px_120px_rgba(0,0,0,0.4)] md:px-10 md:py-12">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.24),transparent_28%),radial-gradient(circle_at_12%_28%,rgba(212,255,57,0.2),transparent_24%),linear-gradient(180deg,rgba(0,0,0,0.08),rgba(0,0,0,0.18))]" />
-                <div className="relative grid gap-8 xl:grid-cols-[1fr_26rem] xl:items-end">
+            <section id="shop" className="section-shell pt-4">
+              <div className="relative overflow-hidden rounded-[3rem] border border-white/10 bg-[linear-gradient(135deg,#ff7a1a_0%,#ff3bb8_54%,#0d1324_100%)] p-8 shadow-[0_35px_110px_rgba(0,0,0,0.34)] md:p-12">
+                <div className="pointer-events-none absolute -right-10 top-8 h-56 w-56 rounded-full bg-white/10 blur-[120px]" />
+                <div className="pointer-events-none absolute -left-8 bottom-0 h-56 w-56 rounded-full bg-[#d4ff39]/18 blur-[130px]" />
+
+                <div className="relative grid gap-8 xl:grid-cols-[1fr_25rem] xl:items-end">
                   <div>
-                    <p className="text-sm font-black uppercase tracking-[0.36em] text-white/78">
-                      Final Pour
+                    <p className="text-[0.72rem] font-black uppercase tracking-[0.32em] text-white/82">
+                      Final call
                     </p>
-                    <h2 className="mt-5 max-w-3xl font-display text-5xl font-extrabold uppercase leading-[0.9] tracking-[-0.06em] text-white md:text-7xl">
-                      Ready to bring something better to the night?
+                    <h2 className="mt-5 max-w-3xl font-display text-5xl font-extrabold uppercase leading-[0.9] tracking-[-0.08em] text-white md:text-7xl">
+                      Ready to bring a louder can to the night?
                     </h2>
                     <p className="mt-6 max-w-2xl text-lg leading-8 text-white/84">
-                      Start with the party pack, pick a favorite, then act surprised when your
-                      “one case” disappears before midnight.
+                      The new version leads with the product, keeps the motion where it matters, and
+                      feels closer to a real premium beverage campaign instead of a random UI stack.
                     </p>
 
                     <div className="mt-9 flex flex-col gap-4 sm:flex-row">
                       <a
-                        href="#home"
-                        className="rounded-full bg-white px-8 py-4 text-center text-sm font-black uppercase tracking-[0.24em] text-night transition-transform duration-300 hover:-translate-y-0.5"
+                        href="#flavors"
+                        className="inline-flex items-center justify-center gap-3 rounded-full bg-white px-8 py-4 text-sm font-black uppercase tracking-[0.24em] text-night transition-transform duration-300 hover:-translate-y-0.5"
                       >
-                        Shop Now
+                        Shop now
+                        <ArrowRight className="h-4 w-4" />
                       </a>
                       <a
                         href="#reviews"
-                        className="rounded-full border border-white/20 bg-black/20 px-8 py-4 text-center text-sm font-black uppercase tracking-[0.24em] text-white transition-colors duration-300 hover:bg-black/30"
+                        className="inline-flex items-center justify-center rounded-full border border-white/18 bg-black/20 px-8 py-4 text-sm font-black uppercase tracking-[0.24em] text-white transition-colors duration-300 hover:bg-black/28"
                       >
-                        Read the Hype
+                        Read reviews
                       </a>
                     </div>
                   </div>
 
-                  <div className="rounded-[2.4rem] border border-white/15 bg-black/35 p-6 backdrop-blur-xl">
-                    <p className="text-[0.72rem] font-black uppercase tracking-[0.34em] text-[#d4ff39]">
-                      Best first order
+                  <div className="rounded-[2.2rem] border border-white/12 bg-black/28 p-6 backdrop-blur-xl">
+                    <p className="text-[0.7rem] font-black uppercase tracking-[0.28em] text-[#d4ff39]">
+                      Party pack
                     </p>
-                    <p className="mt-4 font-display text-4xl font-extrabold uppercase leading-none tracking-[-0.06em] text-white">
-                      Fizzora Party Pack
+                    <p className="mt-4 font-display text-4xl font-extrabold uppercase leading-none tracking-[-0.06em]">
+                      12 cans
                     </p>
-                    <p className="mt-4 text-sm leading-7 text-white/76">
-                      12 cans across all four signatures. Built for hosts, over-packers, and people
-                      who do not want to arrive empty-handed.
+                    <p className="mt-4 text-sm leading-7 text-white/78">
+                      Citrus Riot, Berry Afterdark, Ginger Frequency, and Midnight Disco Cola in one
+                      bold starter pack.
                     </p>
 
-                    <div className="mt-6 space-y-3">
-                      {[
-                        '3 cans each of Citrus Riot, Berry Afterdark, Ginger Frequency, and Midnight Disco Cola',
-                        'Good in the cooler, stronger in a rocks glass, fully comfortable on a dinner table',
-                        'Free shipping over two cases and a loud sticker in every first order',
-                      ].map((line) => (
-                        <div
-                          key={line}
-                          className="rounded-[1.4rem] border border-white/10 bg-white/8 px-4 py-3 text-sm leading-6 text-white/82"
-                        >
-                          {line}
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="mt-6 flex items-end justify-between gap-4">
+                    <div className="mt-6 flex items-end justify-between">
                       <div>
-                        <p className="text-[0.65rem] font-black uppercase tracking-[0.28em] text-white/46">
+                        <p className="text-[0.65rem] font-black uppercase tracking-[0.28em] text-white/48">
                           Starting at
                         </p>
-                        <p className="mt-2 font-display text-5xl font-extrabold uppercase leading-none tracking-[-0.08em] text-white">
+                        <p className="mt-2 font-display text-5xl font-extrabold uppercase leading-none tracking-[-0.08em]">
                           $34
                         </p>
                       </div>
@@ -639,8 +511,8 @@ export function App() {
             </section>
           </main>
 
-          <footer className="px-5 pb-10 pt-2 md:px-8 lg:px-10">
-            <div className="mx-auto grid max-w-[1380px] gap-8 rounded-[2.6rem] border border-white/10 bg-black/35 p-7 backdrop-blur-2xl md:p-8 xl:grid-cols-[0.9fr_0.8fr_0.9fr]">
+          <footer className="px-4 pb-10 pt-2 md:px-8 lg:px-10">
+            <div className="mx-auto grid max-w-[1380px] gap-8 rounded-[2.8rem] border border-white/10 bg-black/35 p-7 backdrop-blur-2xl md:p-8 xl:grid-cols-[0.95fr_0.8fr_0.9fr]">
               <div>
                 <div className="flex items-center gap-3">
                   <BrandMark className="h-12 w-12 shrink-0" />
@@ -648,25 +520,30 @@ export function App() {
                     <p className="font-display text-2xl font-extrabold uppercase tracking-[-0.05em]">
                       {brand.name}
                     </p>
-                    <p className="text-[0.62rem] uppercase tracking-[0.38em] text-white/52">
+                    <p className="text-[0.62rem] uppercase tracking-[0.34em] text-white/52">
                       {brand.tagline}
                     </p>
                   </div>
                 </div>
                 <p className="mt-5 max-w-sm text-sm leading-7 text-white/68">
-                  A fictional campaign brand built for brighter cans, darker nights, and social
-                  energy that does not disappear after one sip.
+                  Premium zero-proof drinks for social nights, better-looking tables, and people
+                  who still want the ritual without the alcohol.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
-                  {socialLinks.map((link) => (
-                    <a
-                      key={link}
-                      href="#home"
-                      className="rounded-full border border-white/10 px-4 py-2 text-[0.7rem] font-black uppercase tracking-[0.24em] text-white/72 transition-colors duration-300 hover:bg-white/10"
-                    >
-                      {link}
-                    </a>
-                  ))}
+                  {socialLinks.map((link) => {
+                    const Icon = socialIconMap[link] ?? Sparkles;
+
+                    return (
+                      <a
+                        key={link}
+                        href="#home"
+                        className="inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-[0.68rem] font-black uppercase tracking-[0.24em] text-white/72 transition-colors duration-300 hover:bg-white/10"
+                      >
+                        <Icon className="h-3.5 w-3.5" />
+                        {link}
+                      </a>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -680,18 +557,17 @@ export function App() {
                   links={[
                     { label: 'hello@fizzora.party', href: 'mailto:hello@fizzora.party' },
                     { label: 'Shipping & FAQs', href: '#shop' },
-                    { label: 'About the Brand', href: '#story' },
+                    { label: 'About the brand', href: '#story' },
                   ]}
                 />
               </div>
 
               <div>
-                <p className="text-[0.7rem] font-black uppercase tracking-[0.34em] text-white/46">
+                <p className="text-[0.68rem] font-black uppercase tracking-[0.28em] text-white/48">
                   Newsletter
                 </p>
                 <p className="mt-4 max-w-sm text-sm leading-7 text-white/68">
-                  New drops, party pack news, playlist energy, and the occasional very good excuse
-                  to stock the fridge.
+                  New drops, fresh visuals, and first call on limited packs.
                 </p>
                 <form
                   className="mt-6 flex flex-col gap-3 sm:flex-row"
@@ -705,18 +581,18 @@ export function App() {
                     id="newsletter-email"
                     type="email"
                     placeholder="Your email"
-                    className="min-w-0 flex-1 rounded-full border border-white/10 bg-black/35 px-5 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/35 focus:border-white/30"
+                    className="min-w-0 flex-1 rounded-full border border-white/10 bg-black/35 px-5 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/35 focus:border-white/28"
                   />
                   <button
                     type="submit"
-                    className="rounded-full bg-white px-6 py-3 text-sm font-black uppercase tracking-[0.24em] text-night transition-transform duration-300 hover:-translate-y-0.5"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-black uppercase tracking-[0.24em] text-night transition-transform duration-300 hover:-translate-y-0.5"
                   >
-                    Join In
+                    Join in
+                    <Send className="h-4 w-4" />
                   </button>
                 </form>
                 <p className="mt-6 text-xs leading-6 text-white/36">
-                  © 2026 Fizzora. Fictional landing-page concept. Crafted to feel loud, social,
-                  premium, and actually worth clicking.
+                  © 2026 Fizzora. Fictional campaign brand concept.
                 </p>
               </div>
             </div>
@@ -727,221 +603,296 @@ export function App() {
   );
 }
 
-function Pill({ children }: { children: string }) {
-  return (
-    <span className="rounded-full border border-white/12 bg-black/30 px-4 py-2 text-[0.68rem] font-black uppercase tracking-[0.24em] text-white/72">
-      {children}
-    </span>
-  );
-}
-
-function FeatureGlyph({ type }: { type: Feature['icon'] }) {
-  const common = 'h-6 w-6 stroke-[1.8]';
-
-  switch (type) {
-    case 'ingredients':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" className={common}>
-          <path d="M12 20C16.418 20 20 16.418 20 12C20 7.582 16.418 4 12 4C7.582 4 4 7.582 4 12C4 16.418 7.582 20 12 20Z" stroke="currentColor" />
-          <path d="M9 13C9.5 10 11.1 8.2 14 8" stroke="currentColor" strokeLinecap="round" />
-          <path d="M11 16C11.5 13.5 12.6 12.2 15 11.5" stroke="currentColor" strokeLinecap="round" />
-        </svg>
-      );
-    case 'sweetener':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" className={common}>
-          <path d="M5 19L19 5" stroke="currentColor" strokeLinecap="round" />
-          <path d="M8 8L16 16" stroke="currentColor" strokeLinecap="round" />
-          <path d="M12 21C16.971 21 21 16.971 21 12C21 7.029 16.971 3 12 3C7.029 3 3 7.029 3 12C3 16.971 7.029 21 12 21Z" stroke="currentColor" />
-        </svg>
-      );
-    case 'flavor':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" className={common}>
-          <path d="M12 3L15 9L21 10L16.5 14.2L17.5 21L12 18L6.5 21L7.5 14.2L3 10L9 9L12 3Z" stroke="currentColor" strokeLinejoin="round" />
-        </svg>
-      );
-    case 'mix':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" className={common}>
-          <path d="M7 4H17L14.5 20H9.5L7 4Z" stroke="currentColor" strokeLinejoin="round" />
-          <path d="M9 9H15" stroke="currentColor" strokeLinecap="round" />
-          <path d="M7.5 4L5 2" stroke="currentColor" strokeLinecap="round" />
-          <path d="M16.5 4L19 2" stroke="currentColor" strokeLinecap="round" />
-        </svg>
-      );
-    case 'zero':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" className={common}>
-          <path d="M7 12C7 8.686 9.686 6 13 6C16.314 6 19 8.686 19 12C19 15.314 16.314 18 13 18C9.686 18 7 15.314 7 12Z" stroke="currentColor" />
-          <path d="M5 19L19 5" stroke="currentColor" strokeLinecap="round" />
-        </svg>
-      );
-  }
-}
-
-function BenefitPanel({ feature, index }: { feature: Feature; index: number }) {
-  const accents = [
-    'from-[#ff7a1a]/22 to-white/[0.03]',
-    'from-[#ff3bb8]/20 to-white/[0.03]',
-    'from-[#30c9ff]/18 to-white/[0.03]',
-    'from-[#d4ff39]/16 to-white/[0.03]',
-    'from-[#7b5cff]/18 to-white/[0.03]',
-  ];
-
-  return (
-    <motion.article
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.7, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -6, rotate: index % 2 === 0 ? -1 : 1 }}
-      className={`rounded-[2.2rem] border border-white/10 bg-gradient-to-br ${accents[index]} p-6 shadow-[0_24px_70px_rgba(0,0,0,0.28)]`}
-    >
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex h-14 w-14 items-center justify-center rounded-[1.4rem] border border-white/10 bg-black/30 text-white">
-          <FeatureGlyph type={feature.icon} />
-        </div>
-        <span className="font-display text-4xl font-extrabold uppercase tracking-[-0.08em] text-white/14">
-          0{index + 1}
-        </span>
-      </div>
-      <h3 className="mt-6 max-w-xs font-display text-3xl font-extrabold uppercase leading-none tracking-[-0.05em] text-white">
-        {feature.title}
-      </h3>
-      <p className="mt-4 max-w-sm text-sm leading-7 text-white/74">{feature.description}</p>
-    </motion.article>
-  );
-}
-
-function FlavorPoster({
-  flavor,
-  index,
-  className,
+function Header({
+  menuOpen,
+  onToggleMenu,
 }: {
-  flavor: Flavor;
-  index: number;
-  className: string;
+  menuOpen: boolean;
+  onToggleMenu: () => void;
 }) {
-  const notes = flavor.flavorLine.split(',').map((note) => note.trim());
-  const canClasses = [
-    'absolute bottom-6 right-2 origin-bottom-right scale-[0.95] md:right-6 md:scale-[1.08]',
-    'absolute bottom-[-0.5rem] right-2 origin-bottom-right scale-[0.82]',
-    'absolute bottom-[-0.5rem] right-2 origin-bottom-right scale-[0.82]',
-    'absolute bottom-2 right-2 origin-bottom-right scale-[0.88] md:right-6 md:scale-[0.98]',
-  ];
-
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 26 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.75, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -8, scale: 1.01 }}
-      className={`group relative isolate overflow-hidden rounded-[2.8rem] border border-white/10 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.32)] md:p-8 ${className}`}
-      style={{ backgroundImage: flavor.gradient }}
-    >
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),transparent_30%,rgba(0,0,0,0.18)_100%)]" />
-      <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" style={{ backgroundImage: `radial-gradient(circle_at_top_right, ${flavor.accent}4a, transparent 30%)` }} />
-      <div className="relative flex h-full flex-col justify-between">
-        <div className="max-w-[60%]">
-          <div className="flex items-start justify-between gap-4">
-            <div className="rounded-full border border-white/15 bg-black/20 px-4 py-2 text-[0.68rem] font-black uppercase tracking-[0.28em] text-white/78">
-              0{index + 1}
-            </div>
-            <span className="hidden rounded-full border border-white/15 bg-black/20 px-4 py-2 text-[0.68rem] font-black uppercase tracking-[0.24em] text-white/76 sm:inline-flex">
-              {flavor.price}
-            </span>
+    <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 md:px-8 lg:px-10">
+      <div className="mx-auto flex max-w-[1380px] items-center justify-between rounded-full border border-white/10 bg-black/50 px-5 py-4 backdrop-blur-2xl">
+        <a href="#home" className="flex items-center gap-3">
+          <BrandMark className="h-11 w-11 shrink-0" />
+          <div>
+            <p className="font-display text-xl font-extrabold uppercase tracking-[-0.04em]">
+              {brand.name}
+            </p>
+            <p className="text-[0.62rem] uppercase tracking-[0.34em] text-white/54">
+              {brand.tagline}
+            </p>
           </div>
-          <p className="mt-8 text-[0.68rem] font-black uppercase tracking-[0.32em] text-white/70">
-            {flavor.flavorLine}
-          </p>
-          <h3 className="mt-4 font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.06em] text-white md:text-5xl">
-            {flavor.name}
-          </h3>
-          <p className="mt-5 max-w-md text-sm leading-7 text-white/84">{flavor.description}</p>
-        </div>
+        </a>
 
-        <div className="relative z-10 mt-10 max-w-[70%]">
-          <div className="flex flex-wrap gap-2">
-            {notes.map((note) => (
-              <span
-                key={note}
-                className="rounded-full border border-white/15 bg-black/20 px-3 py-1.5 text-[0.65rem] font-black uppercase tracking-[0.2em] text-white/78"
-              >
-                {note}
-              </span>
-            ))}
-          </div>
-          <p className="mt-5 max-w-sm text-sm font-bold leading-7 text-white/88">{flavor.detail}</p>
+        <nav aria-label="Primary" className="hidden items-center gap-8 lg:flex">
+          {navLinks.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              className="text-[0.68rem] font-black uppercase tracking-[0.26em] text-white/62 transition-colors duration-300 hover:text-white"
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-3">
           <a
             href="#shop"
-            className="mt-6 inline-flex rounded-full bg-white px-5 py-3 text-sm font-black uppercase tracking-[0.22em] text-night transition-transform duration-300 hover:-translate-y-0.5"
+            className="hidden rounded-full bg-white px-5 py-3 text-[0.68rem] font-black uppercase tracking-[0.26em] text-night transition-transform duration-300 hover:-translate-y-0.5 sm:inline-flex"
           >
-            Shop Flavor
+            Buy the pack
           </a>
+          <button
+            type="button"
+            onClick={onToggleMenu}
+            className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white lg:hidden"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </div>
+    </header>
+  );
+}
 
-      <div className="pointer-events-none absolute left-6 top-4 font-display text-[7rem] font-extrabold uppercase leading-none tracking-[-0.08em] text-white/[0.08] md:text-[9rem]">
-        0{index + 1}
+function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
+  return (
+    <AnimatePresence>
+      {open ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-40 bg-black/72 px-4 pt-24 backdrop-blur-xl lg:hidden"
+        >
+          <motion.div
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -20, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mx-auto max-w-[1380px] rounded-[2rem] border border-white/10 bg-[#0a0c14] p-5 shadow-[0_28px_80px_rgba(0,0,0,0.45)]"
+          >
+            <div className="space-y-3">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={onClose}
+                  className="flex items-center justify-between rounded-[1.4rem] border border-white/8 bg-white/5 px-4 py-4 font-display text-2xl font-extrabold uppercase tracking-[-0.05em]"
+                >
+                  {link.label}
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+              ))}
+            </div>
+            <a
+              href="#shop"
+              onClick={onClose}
+              className="mt-4 inline-flex w-full items-center justify-center rounded-full bg-[linear-gradient(135deg,#ff7a1a_0%,#ff3bb8_55%,#30c9ff_100%)] px-5 py-4 text-sm font-black uppercase tracking-[0.24em] text-white"
+            >
+              Buy the pack
+            </a>
+          </motion.div>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
+  );
+}
+
+function HeroChip({ label, index }: { label: string; index: number }) {
+  const accents = ['#ff7a1a', '#ff3bb8', '#30c9ff'] as const;
+
+  return (
+    <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/22 px-3 py-2 text-[0.64rem] font-black uppercase tracking-[0.24em] text-white/70">
+      <span className="h-2 w-2 rounded-full" style={{ backgroundColor: accents[index] }} />
+      {label}
+    </div>
+  );
+}
+
+function HeroSceneFallback() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="h-[18rem] w-[18rem] rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.12),rgba(255,59,184,0.08),transparent_70%)] blur-2xl" />
+      <div className="absolute bottom-[22%] h-16 w-[18rem] rounded-full bg-black/40 blur-2xl" />
+    </div>
+  );
+}
+
+function HeroStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-[1.8rem] border border-white/10 bg-white/5 p-5">
+      <p className="text-[0.68rem] font-black uppercase tracking-[0.28em] text-white/48">{label}</p>
+      <p className="mt-4 text-sm leading-7 text-white/76">{value}</p>
+    </div>
+  );
+}
+
+function SectionIntro({
+  eyebrow,
+  title,
+  body,
+}: {
+  eyebrow: string;
+  title: string;
+  body: string;
+}) {
+  return (
+    <div className="max-w-3xl">
+      <p className="text-[0.72rem] font-black uppercase tracking-[0.32em] text-[#d4ff39]">
+        {eyebrow}
+      </p>
+      <h2 className="mt-5 font-display text-5xl font-extrabold uppercase leading-[0.92] tracking-[-0.08em] text-white md:text-6xl">
+        {title}
+      </h2>
+      <p className="mt-6 text-lg leading-8 text-white/74">{body}</p>
+    </div>
+  );
+}
+
+function BenefitCard({ feature, index }: { feature: Feature; index: number }) {
+  const Icon = getFeatureIcon(feature.icon);
+  const accent =
+    [
+      'linear-gradient(135deg, rgba(255,122,26,0.22), rgba(255,59,184,0.1))',
+      'linear-gradient(135deg, rgba(255,59,184,0.2), rgba(17,24,39,0.1))',
+      'linear-gradient(135deg, rgba(48,201,255,0.18), rgba(17,24,39,0.1))',
+      'linear-gradient(135deg, rgba(212,255,57,0.18), rgba(17,24,39,0.1))',
+      'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(17,24,39,0.1))',
+    ][index] ?? 'linear-gradient(135deg, rgba(255,255,255,0.08), rgba(17,24,39,0.1))';
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.25 }}
+      className={`rounded-[2rem] border border-white/10 p-6 ${
+        index === 0 ? 'md:col-span-2 xl:col-span-2' : ''
+      }`}
+      style={{ backgroundImage: accent }}
+    >
+      <div className="flex h-14 w-14 items-center justify-center rounded-[1.2rem] border border-white/10 bg-black/28 text-white">
+        <Icon className="h-6 w-6" />
       </div>
-
-      <CanMock
-        name={flavor.name}
-        flavorLine={flavor.flavorLine}
-        gradient={flavor.gradient}
-        rotate={index % 2 === 0 ? -8 : 10}
-        delay={index * 0.2}
-        compact={index !== 0}
-        className={canClasses[index]}
-      />
+      <h3 className="mt-6 font-display text-2xl font-extrabold uppercase leading-none tracking-[-0.05em] text-white">
+        {feature.title}
+      </h3>
+      <p className="mt-4 max-w-md text-sm leading-7 text-white/72">{feature.description}</p>
     </motion.article>
   );
 }
 
-function StoryStat({ value, label }: { value: string; label: string }) {
+function FlavorShowcase({ flavor, index }: { flavor: Flavor; index: number }) {
+  const Icon = flavorIcons[index] ?? Sparkles;
+
+  return (
+    <article className="relative overflow-hidden rounded-[2.8rem] border border-white/10 bg-[#090b12] p-6 shadow-[0_26px_90px_rgba(0,0,0,0.34)] md:p-8">
+      <div
+        className="absolute inset-0 opacity-90"
+        style={{
+          backgroundImage: `${flavor.gradient}, radial-gradient(circle at top right, rgba(255,255,255,0.12), transparent 22%)`,
+        }}
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),transparent_24%,rgba(0,0,0,0.32)_100%)]" />
+
+      <div className="relative grid gap-8 lg:grid-cols-[0.95fr_0.85fr] lg:items-end">
+        <div className="max-w-[28rem]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-black/18 px-4 py-2 text-[0.68rem] font-black uppercase tracking-[0.26em] text-white/82">
+            <Icon className="h-4 w-4" />
+            {flavor.price}
+          </div>
+
+          <h3 className="mt-6 font-display text-5xl font-extrabold uppercase leading-[0.88] tracking-[-0.07em] text-white md:text-6xl">
+            {flavor.name}
+          </h3>
+          <p className="mt-5 text-base leading-8 text-white/86">{flavor.description}</p>
+          <p className="mt-4 text-sm font-bold leading-7 text-white/92">{flavor.detail}</p>
+
+          <div className="mt-7 flex flex-wrap gap-3">
+            <span className="rounded-full border border-white/12 bg-black/20 px-4 py-2 text-[0.66rem] font-black uppercase tracking-[0.22em] text-white/74">
+              {flavor.flavorLine}
+            </span>
+            <span className="rounded-full border border-white/12 bg-black/20 px-4 py-2 text-[0.66rem] font-black uppercase tracking-[0.22em] text-white/74">
+              Mix or drink solo
+            </span>
+          </div>
+
+          <a
+            href="#shop"
+            className="mt-8 inline-flex items-center gap-3 rounded-full bg-white px-6 py-3 text-sm font-black uppercase tracking-[0.22em] text-night transition-transform duration-300 hover:-translate-y-0.5"
+          >
+            Add to pack
+            <ArrowRight className="h-4 w-4" />
+          </a>
+        </div>
+
+        <div className="flex justify-center lg:justify-end">
+          <CanMock
+            name={flavor.name}
+            flavorLine={flavor.flavorLine}
+            gradient={flavor.gradient}
+            rotate={index % 2 === 0 ? -8 : 8}
+            delay={index * 0.15}
+            className="scale-[0.74] sm:scale-[0.82] md:scale-[0.92]"
+          />
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function StoryMetric({ value, label }: { value: string; label: string }) {
   return (
     <div className="rounded-[1.8rem] border border-white/10 bg-white/5 p-5">
-      <p className="font-display text-4xl font-extrabold uppercase leading-none tracking-[-0.07em] text-white">
+      <p className="font-display text-4xl font-extrabold uppercase leading-none tracking-[-0.08em] text-white">
         {value}
       </p>
-      <p className="mt-3 text-[0.68rem] font-black uppercase tracking-[0.28em] text-white/46">
+      <p className="mt-3 text-[0.68rem] font-black uppercase tracking-[0.28em] text-white/48">
         {label}
       </p>
     </div>
   );
 }
 
-function MomentCard({ shot, index }: { shot: LifestyleShot; index: number }) {
+function LifestyleTile({
+  shot,
+  index,
+}: {
+  shot: (typeof lifestyleShots)[number];
+  index: number;
+}) {
   return (
     <motion.article
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.7, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
-      className={`group relative overflow-hidden rounded-[2.6rem] border border-white/10 shadow-[0_24px_80px_rgba(0,0,0,0.35)] ${
-        index === 0
-          ? 'min-w-[82vw] md:min-w-[42rem] xl:min-w-[48rem]'
-          : 'min-w-[20rem] md:min-w-[25rem] xl:min-w-[28rem]'
+      viewport={{ once: true, amount: 0.2 }}
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.35 }}
+      className={`group relative overflow-hidden rounded-[2.4rem] border border-white/10 shadow-[0_24px_70px_rgba(0,0,0,0.3)] ${
+        index === 0 ? 'sm:col-span-2' : ''
       }`}
     >
       <img
         src={shot.image}
         alt={shot.title}
-        className="h-[25rem] w-full object-cover transition-transform duration-700 group-hover:scale-105 md:h-[30rem]"
+        className={`w-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+          index === 0 ? 'h-[24rem]' : 'h-[18rem]'
+        }`}
         loading="lazy"
         decoding="async"
       />
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_10%,rgba(0,0,0,0.12)_40%,rgba(0,0,0,0.88)_100%)]" />
-      <div className="absolute left-6 top-6 rounded-full border border-white/15 bg-black/35 px-4 py-2 text-[0.68rem] font-black uppercase tracking-[0.24em] text-white/78">
-        0{index + 1}
-      </div>
-      <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
-        <p className="text-[0.7rem] font-black uppercase tracking-[0.34em] text-[#d4ff39]">
-          {index === 0 ? 'No Rules. Just Good Times.' : shot.title}
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_12%,rgba(0,0,0,0.18)_44%,rgba(0,0,0,0.9)_100%)]" />
+      <div className="absolute inset-x-0 bottom-0 p-6">
+        <p className="text-[0.68rem] font-black uppercase tracking-[0.28em] text-[#d4ff39]">
+          {index === 0 ? 'No rules. Just good times.' : shot.title}
         </p>
-        <p className="mt-4 max-w-md font-display text-3xl font-extrabold uppercase leading-none tracking-[-0.05em] text-white md:text-4xl">
+        <p className="mt-4 max-w-md font-display text-3xl font-extrabold uppercase leading-none tracking-[-0.05em] text-white">
           {shot.caption}
         </p>
       </div>
@@ -949,63 +900,59 @@ function MomentCard({ shot, index }: { shot: LifestyleShot; index: number }) {
   );
 }
 
-function ReviewBubble({
+function ReviewCard({
   testimonial,
   index,
 }: {
   testimonial: Testimonial;
   index: number;
 }) {
-  const tones = [
-    'bg-[linear-gradient(180deg,rgba(255,122,26,0.18),rgba(255,255,255,0.04))]',
-    'bg-[linear-gradient(180deg,rgba(255,59,184,0.18),rgba(255,255,255,0.04))]',
-    'bg-[linear-gradient(180deg,rgba(48,201,255,0.18),rgba(255,255,255,0.04))]',
-    'bg-[linear-gradient(180deg,rgba(212,255,57,0.14),rgba(255,255,255,0.04))]',
-  ];
-
   return (
     <motion.article
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.7, delay: index * 0.07, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -6, rotate: index % 2 === 0 ? -1 : 1 }}
-      className={`rounded-[2.2rem] border border-white/10 ${tones[index % tones.length]} p-6 shadow-[0_24px_70px_rgba(0,0,0,0.28)]`}
+      viewport={{ once: true, amount: 0.2 }}
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.3, delay: index * 0.04 }}
+      className="rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] p-6"
     >
-      <p className="text-[0.72rem] font-black uppercase tracking-[0.34em] text-[#d4ff39]">
-        ★★★★★
-      </p>
-      <p className="mt-5 text-lg leading-8 text-white/90">“{testimonial.quote}”</p>
+      <div className="flex items-center gap-1 text-[#d4ff39]">
+        {Array.from({ length: 5 }).map((_, starIndex) => (
+          <Star key={starIndex} className="h-4 w-4 fill-current" />
+        ))}
+      </div>
+      <p className="mt-5 text-lg leading-8 text-white/88">“{testimonial.quote}”</p>
       <div className="mt-8">
         <p className="font-bold uppercase tracking-[0.08em] text-white">{testimonial.name}</p>
-        <p className="mt-1 text-sm text-white/58">{testimonial.title}</p>
+        <p className="mt-1 text-sm text-white/56">{testimonial.title}</p>
       </div>
     </motion.article>
   );
 }
 
-function ServePanel({ mode, index }: { mode: ServingMode; index: number }) {
+function ServingCard({ mode, index }: { mode: ServingMode; index: number }) {
+  const Icon = getServingIcon(mode.icon);
+  const accents = ['#ff7a1a', '#ff3bb8', '#30c9ff'] as const;
+
   return (
     <motion.article
-      whileHover={{ y: -6, scale: 1.01 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
-      className="rounded-[2.2rem] border border-white/10 bg-black/30 p-6 backdrop-blur-xl"
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.24 }}
+      className="rounded-[2rem] border border-white/10 bg-black/28 p-6 backdrop-blur-xl"
     >
       <div className="flex items-center justify-between">
         <div
           className="flex h-14 w-14 items-center justify-center rounded-full text-night"
-          style={{ backgroundColor: serveAccents[index] }}
+          style={{ backgroundColor: accents[index] }}
         >
-          <span className="font-display text-2xl font-extrabold uppercase">
-            {String(index + 1).padStart(2, '0')}
-          </span>
+          <Icon className="h-6 w-6" />
         </div>
         <div className="h-px flex-1 bg-white/10" />
       </div>
       <h3 className="mt-7 font-display text-3xl font-extrabold uppercase leading-none tracking-[-0.05em] text-white">
         {mode.title}
       </h3>
-      <p className="mt-4 text-sm leading-7 text-white/74">{mode.description}</p>
+      <p className="mt-4 text-sm leading-7 text-white/72">{mode.description}</p>
     </motion.article>
   );
 }
@@ -1019,8 +966,8 @@ function FooterColumn({
 }) {
   return (
     <div>
-      <p className="text-[0.7rem] font-black uppercase tracking-[0.34em] text-white/46">{title}</p>
-      <div className="mt-4 space-y-3 text-white/76">
+      <p className="text-[0.68rem] font-black uppercase tracking-[0.28em] text-white/48">{title}</p>
+      <div className="mt-4 space-y-3 text-white/74">
         {links.map((link) => (
           <a key={link.label} href={link.href} className="block transition-colors hover:text-white">
             {link.label}
@@ -1031,31 +978,28 @@ function FooterColumn({
   );
 }
 
-function OrbitTag({
-  label,
-  className,
-  delay,
-}: {
-  label: string;
-  className: string;
-  delay: number;
-}) {
-  return (
-    <motion.div
-      animate={{
-        y: [0, -10, 0],
-        x: [0, 6, 0],
-        rotate: [-4, 4, -4],
-      }}
-      transition={{
-        duration: 7 + delay,
-        delay,
-        repeat: Infinity,
-        ease: 'easeInOut',
-      }}
-      className={`absolute z-30 rounded-full border border-white/12 bg-black/45 px-4 py-2 text-[0.68rem] font-black uppercase tracking-[0.24em] text-white/76 backdrop-blur-xl ${className}`}
-    >
-      {label}
-    </motion.div>
-  );
+function getFeatureIcon(type: Feature['icon']) {
+  switch (type) {
+    case 'ingredients':
+      return Sparkles;
+    case 'sweetener':
+      return CircleOff;
+    case 'flavor':
+      return Zap;
+    case 'mix':
+      return Martini;
+    case 'zero':
+      return BadgeCheck;
+  }
+}
+
+function getServingIcon(type: ServingMode['icon']) {
+  switch (type) {
+    case 'straight':
+      return GlassWater;
+    case 'mix':
+      return Blend;
+    case 'anywhere':
+      return MapPinned;
+  }
 }
