@@ -1,0 +1,17 @@
+{
+  "name": "Fizzora",
+  "short_name": "Fizzora",
+  "description": "Premium zero-proof party drinks with bold flavor and nightlife energy.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#06070b",
+  "theme_color": "#06070b",
+  "icons": [
+    {
+      "src": "/fizzora-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

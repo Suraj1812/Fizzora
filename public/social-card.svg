@@ -1,0 +1,78 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" rx="40" fill="#06070B"/>
+  <rect x="18" y="18" width="1164" height="594" rx="30" stroke="white" stroke-opacity="0.08" stroke-width="2"/>
+  <g opacity="0.8" filter="url(#filter0_f_1_9)">
+    <circle cx="257" cy="113" r="170" fill="#FF3BB8"/>
+  </g>
+  <g opacity="0.8" filter="url(#filter1_f_1_9)">
+    <circle cx="1078" cy="206" r="190" fill="#30C9FF"/>
+  </g>
+  <g opacity="0.9" filter="url(#filter2_f_1_9)">
+    <circle cx="643" cy="584" r="170" fill="#D4FF39"/>
+  </g>
+  <rect x="76" y="76" width="172" height="172" rx="42" fill="url(#paint0_linear_1_9)"/>
+  <rect x="86" y="86" width="152" height="152" rx="34" stroke="white" stroke-opacity="0.14" stroke-width="2"/>
+  <path d="M131 117C131 112.582 134.582 109 139 109H199C203.418 109 207 112.582 207 117V125C207 129.418 203.418 133 199 133H155V157H184C188.418 157 192 160.582 192 165V171C192 175.418 188.418 179 184 179H155V215C155 219.418 151.418 223 147 223H139C134.582 223 131 219.418 131 215V117Z" fill="white"/>
+  <path d="M165 138.5H206" stroke="#D4FF39" stroke-width="10" stroke-linecap="round"/>
+  <path d="M165 176.5H191" stroke="#30C9FF" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="206" cy="184" r="9" fill="#D4FF39"/>
+  <circle cx="219" cy="159" r="5" fill="white" fill-opacity="0.85"/>
+  <text x="76" y="317" fill="#D4FF39" font-family="Arial, sans-serif" font-size="22" font-weight="700" letter-spacing="8">
+    PREMIUM ZERO-PROOF PARTY DRINKS
+  </text>
+  <text x="76" y="418" fill="white" font-family="Arial, sans-serif" font-size="98" font-weight="900">
+    FIZZORA
+  </text>
+  <text x="76" y="500" fill="white" fill-opacity="0.82" font-family="Arial, sans-serif" font-size="54" font-weight="700">
+    Big Flavor. Zero Rules.
+  </text>
+  <text x="76" y="554" fill="white" fill-opacity="0.66" font-family="Arial, sans-serif" font-size="28" font-weight="500">
+    Loud sparkling cans built for social nights, bold mixers, and zero compromise.
+  </text>
+  <g opacity="0.9">
+    <rect x="803" y="118" width="288" height="376" rx="42" fill="url(#paint1_linear_1_9)"/>
+    <rect x="823" y="140" width="248" height="332" rx="34" stroke="white" stroke-opacity="0.12" stroke-width="2"/>
+    <text x="857" y="196" fill="white" fill-opacity="0.78" font-family="Arial, sans-serif" font-size="19" font-weight="700" letter-spacing="5">
+      FIZZORA
+    </text>
+    <text x="1010" y="196" fill="white" fill-opacity="0.78" font-family="Arial, sans-serif" font-size="19" font-weight="700" letter-spacing="5">
+      0.0%
+    </text>
+    <text x="855" y="397" fill="white" font-family="Arial, sans-serif" font-size="52" font-weight="900">
+      Citrus
+    </text>
+    <text x="855" y="447" fill="white" font-family="Arial, sans-serif" font-size="52" font-weight="900">
+      Riot
+    </text>
+    <text x="857" y="247" fill="white" fill-opacity="0.9" font-family="Arial, sans-serif" font-size="20" font-weight="700">
+      Blood orange, yuzu, lime peel
+    </text>
+  </g>
+  <defs>
+    <filter id="filter0_f_1_9" x="-73" y="-217" width="660" height="660" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="80" result="effect1_foregroundBlur_1_9"/>
+    </filter>
+    <filter id="filter1_f_1_9" x="728" y="-144" width="700" height="700" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="80" result="effect1_foregroundBlur_1_9"/>
+    </filter>
+    <filter id="filter2_f_1_9" x="313" y="254" width="660" height="660" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="80" result="effect1_foregroundBlur_1_9"/>
+    </filter>
+    <linearGradient id="paint0_linear_1_9" x1="94" y1="96" x2="230" y2="232" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF7A1A"/>
+      <stop offset="0.52" stop-color="#FF3BB8"/>
+      <stop offset="1" stop-color="#1B7FFF"/>
+    </linearGradient>
+    <linearGradient id="paint1_linear_1_9" x1="831" y1="143" x2="1062" y2="481" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFB347"/>
+      <stop offset="0.4" stop-color="#FF7A1A"/>
+      <stop offset="1" stop-color="#FF3BB8"/>
+    </linearGradient>
+  </defs>
+</svg>

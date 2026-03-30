@@ -1,0 +1,44 @@
+{
+  "name": "fizzora-landing-page",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Fizzora is a premium zero-proof beverage landing page built with React, Tailwind CSS, and Framer Motion.",
+  "author": "Suraj Singh",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Suraj1812/Fizzora.git"
+  },
+  "keywords": [
+    "fizzora",
+    "zero proof drinks",
+    "non alcoholic beverages",
+    "beverage landing page",
+    "react tailwind landing page",
+    "vercel"
+  ],
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "framer-motion": "^11.11.17",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.16",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10"
+  }
+}
