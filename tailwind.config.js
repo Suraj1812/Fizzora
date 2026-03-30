@@ -13,9 +13,9 @@ export default {
         cobalt: '#30c9ff',
       },
       fontFamily: {
-        display: ['"Bricolage Grotesque"', 'sans-serif'],
-        sans: ['"Manrope"', 'sans-serif'],
-        body: ['"Manrope"', 'sans-serif'],
+        display: ['"Syne"', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+        body: ['"Plus Jakarta Sans"', 'sans-serif'],
       },
       boxShadow: {
         card: '0 24px 80px rgba(0, 0, 0, 0.38)',
