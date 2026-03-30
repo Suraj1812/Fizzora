@@ -36,6 +36,13 @@ const heroChips = [
   'Looks expensive',
 ];
 
+const orbitNotes = [
+  { label: 'Yuzu peel', className: 'left-[7%] top-[18%]', delay: 0.2 },
+  { label: 'Hibiscus', className: 'right-[5%] top-[20%]', delay: 0.7 },
+  { label: 'Cracked pepper', className: 'left-[10%] bottom-[24%]', delay: 1.1 },
+  { label: 'Espresso fizz', className: 'right-[10%] bottom-[18%]', delay: 1.5 },
+];
+
 const flavorLayouts = [
   'lg:col-span-7 lg:row-span-2 min-h-[34rem]',
   'lg:col-span-5 min-h-[25rem]',
@@ -195,6 +202,21 @@ export function App() {
                     className="relative min-h-[760px]"
                   >
                     <div className="absolute inset-0 rounded-[3.2rem] bg-[linear-gradient(135deg,rgba(255,122,26,0.22),rgba(255,59,184,0.18)_36%,rgba(6,7,11,0.92)_70%)] ring-1 ring-white/10 shadow-[0_40px_120px_rgba(0,0,0,0.48)]" />
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 26, repeat: Infinity, ease: 'linear' }}
+                      className="absolute left-1/2 top-1/2 h-[30rem] w-[30rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 border-dashed opacity-35"
+                    />
+                    <motion.div
+                      animate={{ rotate: -360 }}
+                      transition={{ duration: 34, repeat: Infinity, ease: 'linear' }}
+                      className="absolute left-1/2 top-1/2 h-[24rem] w-[24rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 opacity-25"
+                    />
+                    <motion.div
+                      animate={{ scale: [0.94, 1.04, 0.94], opacity: [0.24, 0.44, 0.24] }}
+                      transition={{ duration: 8.5, repeat: Infinity, ease: 'easeInOut' }}
+                      className="absolute left-1/2 top-1/2 h-[18rem] w-[18rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(212,255,57,0.28),transparent_60%)] blur-[30px]"
+                    />
                     <div className="absolute left-6 top-6 h-44 w-56 -rotate-[11deg] overflow-hidden rounded-[2rem] border border-white/10 shadow-[0_24px_50px_rgba(0,0,0,0.35)] md:h-52 md:w-64">
                       <img
                         src={heroPhotos[0]}
@@ -227,6 +249,15 @@ export function App() {
                     <div className="pointer-events-none absolute bottom-16 left-12 hidden font-display text-[7rem] font-extrabold uppercase leading-none tracking-[-0.08em] text-white/[0.08] lg:block">
                       Fizzora
                     </div>
+
+                    {orbitNotes.map((note) => (
+                      <OrbitTag
+                        key={note.label}
+                        label={note.label}
+                        className={note.className}
+                        delay={note.delay}
+                      />
+                    ))}
 
                     <div className="absolute left-1/2 top-[16%] z-10 -translate-x-1/2 md:top-[12%]">
                       <CanMock
@@ -997,5 +1028,34 @@ function FooterColumn({
         ))}
       </div>
     </div>
+  );
+}
+
+function OrbitTag({
+  label,
+  className,
+  delay,
+}: {
+  label: string;
+  className: string;
+  delay: number;
+}) {
+  return (
+    <motion.div
+      animate={{
+        y: [0, -10, 0],
+        x: [0, 6, 0],
+        rotate: [-4, 4, -4],
+      }}
+      transition={{
+        duration: 7 + delay,
+        delay,
+        repeat: Infinity,
+        ease: 'easeInOut',
+      }}
+      className={`absolute z-30 rounded-full border border-white/12 bg-black/45 px-4 py-2 text-[0.68rem] font-black uppercase tracking-[0.24em] text-white/76 backdrop-blur-xl ${className}`}
+    >
+      {label}
+    </motion.div>
   );
 }
